@@ -1,6 +1,6 @@
 # Практическая работа №1
 
-**Тема:"" Создание базового Android-приложения с модульной структурой
+**Тема:** Создание базового Android-приложения с модульной структурой
 
 ---
 
@@ -12,25 +12,37 @@
 
 ## Настройка среды разработки Android Studio и создание первого проекта
 
-Создан базовый проект Android-приложения на Java **LessonOne**, готовый к добавлению модулей. В процессе настройки были подключены необходимые SDK и создан эмулятор устройства. 
+Создан базовый проект Android-приложения на Java **LessonOne**, готовый к добавлению модулей. В процессе настройки были подключены необходимые SDK и создан эмулятор устройства.
 
 ---
 
 ## Добавление модуля
 
-Был создан модуль **layouttype** и подключен к пргоекту, структура приложения стала модульной
+Был создан модуль **layouttype** и подключен к проекту, структура приложения стала модульной.
+
+![image](https://github.com/user-attachments/assets/991b544d-e152-47f2-a6f4-43dbe9f44ea3)
 
 ---
 
-## Работа с интерфейсом 
+## Компоненты экрана и их свойства
 
+Самостоятельно был добавлен элемент TextView в файл activity_main.xml. Текст изменён на собственный **Golysheva**, что позволило закрепить навыки редактирования XML-разметки и работы с графическим редактором Android Studio. В ходе изучения главы были рассмотрены основные компоненты интерфейса Android-приложений, структура **activity**, правила работы с файлами разметки, методы настройки свойств и взаимодействия с кодом.
 
+![image](https://github.com/user-attachments/assets/4cbfcf7e-ea61-4524-9801-972e18a8a08d)
 
 ---
 
-## Макеты и виды Layout  
+## Виды LAYOUT. Ключевые отличия и свойства
 
-  
+В ходе работы были изучены основные типы макетов в Android Studio и реализованы примеры для каждого из них. Создан макет пользовательского интерфейса, демонстрирующий применение компонентов View и их размещение с помощью разных контейнеров.   
+
+![image](https://github.com/user-attachments/assets/39c24caf-0e1d-49ee-b43d-873c099f5080)
+
+![image](https://github.com/user-attachments/assets/9b9c755d-017e-4a19-8f20-2c40300e76f3)
+
+Был создан собственный экран **Модуль control_lesson1** с использованием изученных элементов: 'TextView', 'ImageView', 'Button'
+
+![image](https://github.com/user-attachments/assets/384a8519-5b1c-4c61-8aae-011bee34538b)
 
 ---
 
@@ -59,18 +71,3 @@
 
 **Выполнила**: Голышева Е.А.
 **Группа**: БСБО-09-22
-
----
-
-## Скриншоты
-
-![image](https://github.com/user-attachments/assets/991b544d-e152-47f2-a6f4-43dbe9f44ea3)
-![image](https://github.com/user-attachments/assets/660c2399-17db-467f-8013-fa1ac9ddf1fc)
-![image](https://github.com/user-attachments/assets/51969c8c-02c8-4f5e-a9e4-68a96b1e7c1b)
-![image](https://github.com/user-attachments/assets/7a7a06f8-e0b3-4301-bc08-d007e01df60d)
-![image](https://github.com/user-attachments/assets/b283bc0a-7dfa-4db8-b434-b4fb35974a2b)
-![image](https://github.com/user-attachments/assets/49b4ab2d-8569-42be-9042-18b3d8ee462a)
-![image](https://github.com/user-attachments/assets/5eee39a4-ea5e-4893-b135-9281f6a11b09)
-![image](https://github.com/user-attachments/assets/43dd2c44-1c07-4670-a00c-b7678c560abc)
-![image](https://github.com/user-attachments/assets/3e8fc35e-4955-4696-9c8f-85b775a2795c)
-![image](https://github.com/user-attachments/assets/3ce3e74f-6d1a-4b08-91a1-c147ed30361b)
