@@ -32,7 +32,7 @@
 
 Был создан проект **ru.mirea.golyshevaea.lesson2** с модулем `ActivityLifecycle`. В **MainActivity** переопределены все ключевые методы жизненного цикла: `onCreate`, `onStart`, `onResume`, `onPause`, `onStop`, `onDestroy`, `onRestart`, `onSaveInstanceState`, `onRestoreInstanceState`. Добавлен элемент `EditText` в **activity_main.xml**. В каждом методе логгирование состояния через `Log.i(TAG, "onStart()")` и другие сообщения. Проведен эксперимент с изменением текста и возвратом в приложение (через кнопки Home и Back).
 
-![image](https://github.com/user-attachments/assets/61c4269d-f776-41e5-8d59-632cfb1d9369)
+![Скриншот 1](./images/screen1.png) 
 
 *Ответы на впопросы*:
 1. Будет ли вызван метод `onCreate` после нажатия на кнопку **Home** и возврата в приложение?   
@@ -50,9 +50,9 @@
 
 Был создан проект **MultiActivity** и вторая активность **SecondActivity**. В **MainActivity** реализована кнопка, вызывающая **SecondActivity** через явный `Intent`. Добавлено поле `EditText` и кнопка `Отправить`. Текст передается во вторую активность через `intent.putExtra()`, где отображается в `TextView`.
 
-![image](https://github.com/user-attachments/assets/57e84718-067a-4bd4-a112-21c569190052)
+![Скриншот 3](./images/screen2.png) 
 
-![image](https://github.com/user-attachments/assets/70c56eb6-6bbd-4206-9ddf-183de7dea609)
+
 
 ---
 
