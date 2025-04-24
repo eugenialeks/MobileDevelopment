@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="?android:colorBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/data_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Технологии виртуальных пространств"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="?android:textColorPrimary"
+            android:paddingBottom="8dp" />
+
+        <TextView
+            android:id="@+id/data_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Любите играть в компьютерные игры? Слышали про VR и AR технологии? Хотели бы создать игру мечты, или быть может виртуальный мир?\nПрофиль «Технологии виртуальных пространств» предоставляет возможность научиться создавать собственные жизнеспособные проекты в GameDev индустрии."
+            android:textSize="16sp"
+            android:textColor="?android:textColorSecondary" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
