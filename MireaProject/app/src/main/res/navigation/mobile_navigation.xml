@@ -34,4 +34,10 @@
         android:name="ru.mirea.golysheva.mireaproject.ui.data.DataFragment"
         android:label="Информация"
         tools:layout="@layout/fragment_data" />
+
+    <fragment
+        android:id="@+id/nav_work"
+        android:name="ru.mirea.golysheva.mireaproject.ui.background.WorkFragment"
+        android:label="Фоновая задача"
+        tools:layout="@layout/fragment_background_task" />
 </navigation>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/albumCover"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/albopimg"
+        android:contentDescription="Обложка альбома"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintWidth_percent="0.4"
+        app:layout_constraintDimensionRatio="1" />
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@id/albumCover"
+        app:layout_constraintTop_toBottomOf="@id/songTitle" />
+
+    <LinearLayout
+        android:id="@+id/controlPanel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/albumCover"
+        app:layout_constraintTop_toBottomOf="@id/currentTime">
+
+        <ImageButton
+            android:id="@+id/prevButton"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Назад"
+            android:src="@android:drawable/ic_media_previous"
+            app:tint="@android:color/black" />
+
+        <ImageButton
+            android:id="@+id/playPauseButton"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Play/Pause"
+            android:src="@drawable/ic_play"
+            app:tint="@android:color/black" />
+
+        <ImageButton
+            android:id="@+id/nextButton"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Вперёд"
+            android:src="@android:drawable/ic_media_next"
+            app:tint="@android:color/black" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/durationTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="3:45"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/seekBar" />
+
+    <TextView
+        android:id="@+id/songTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="136dp"
+        android:gravity="center"
+        android:text="Трек №1"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@id/albumCover"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/currentTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="8dp"
+        android:text="0:00"
+        app:layout_constraintStart_toEndOf="@id/albumCover"
+        app:layout_constraintTop_toBottomOf="@id/seekBar" />
+</androidx.constraintlayout.widget.ConstraintLayout>
