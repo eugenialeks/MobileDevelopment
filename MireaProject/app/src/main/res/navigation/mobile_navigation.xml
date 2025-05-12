@@ -40,4 +40,22 @@
         android:name="ru.mirea.golysheva.mireaproject.ui.background.WorkFragment"
         android:label="Фоновая задача"
         tools:layout="@layout/fragment_background_task" />
+
+    <fragment
+        android:id="@+id/nav_sensor"
+        android:name="ru.mirea.golysheva.mireaproject.ui.hardware.SensorFragment"
+        android:label="Компас"
+        tools:layout="@layout/fragment_sensor" />
+
+    <fragment
+        android:id="@+id/nav_camera"
+        android:name="ru.mirea.golysheva.mireaproject.ui.hardware.CameraFragment"
+        android:label="Камера"
+        tools:layout="@layout/fragment_camera" />
+
+    <fragment
+        android:id="@+id/nav_microphone"
+        android:name="ru.mirea.golysheva.mireaproject.ui.hardware.MicrophoneFragment"
+        android:label="Микрофон"
+        tools:layout="@layout/fragment_microphone" />
 </navigation>
