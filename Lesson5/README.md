@@ -1,6 +1,6 @@
-# Практическая работа №4
+# Практическая работа №5
 
-**Тема:** Привязка графических компонентов, асинхронная работа, сервисы и WorkManager в Android‑приложениях
+**Тема:** Использование аппаратных возможностей мобильных устройств: сенсоры, механизм разрешений, камера и микрофон в Android-приложениях
 
 ---
 
@@ -8,207 +8,191 @@
 
 Закрепить навыки:
 
-- подключения и использования `ViewBinding` для связки кода и разметки;
-- организации многопоточности с помощью `Thread`, `Handler`, `Looper` и `Loader`;
-- передачи данных между потоками и обновления UI из фоновых потоков;
-- создания и управления Service‑компонентом для фонового воспроизведения аудио;
-- планирования фоновых задач через `WorkManager`.
+- получения и отображения списка аппаратных датчиков устройства;
+- чтения показаний акселерометра в реальном времени;
+- запроса «опасных» разрешений (runtime permissions) и обработки ответа пользователя;
+- вызова системного приложения «Камера», сохранения снимка через `FileProvider` и отображения результата;
+- записи и воспроизведения аудио при помощи `MediaRecorder` и `MediaPlayer`;
+- интеграции сенсоров, камеры и диктофона в единый проект **MireaProject**.
   
 ---
 
-## ПРИВЯЗКА ГРАФИЧЕСКИХ КОМПОНЕНТОВ
+## СПИСОК ДАТЧИКОВ
 
-Был создан проект **ru.mirea.golysheva.Lesson4**.
+Был создан проект **ru.mirea.golysheva.Lesson5**. Внутри демонстрируется работа с классом SensorManager для получения полной коллекции поддерживаемых датчиков:
 
-В нём показано, как включить и применять `View Binding` в активности и фрагменте, а также как с его помощью сверстать экран музыкального плеера для портретной и горизонтальной ориентации.
-
-В файл `app/build.gradle` было добавлено:
 ```java
-viewBinding {
-    enabled = true
-}
+SensorManager sensorManager =
+        (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+List<Sensor> sensors = sensorManager.getSensorList(Sensor.TYPE_ALL);
 ```
+В макете **activity_main.xml** размещён `ListView`; при старте активности заполняется массивом хеш-карт, где Name — имя сенсора, Value — максимальный диапазон измерений. В результате пользователь видит полный перечень аппаратных и виртуальных датчиков устройства.
 
-![image](https://github.com/user-attachments/assets/fc69139d-4db2-4c9d-b640-dd0c62237be0)
-
-![image](https://github.com/user-attachments/assets/4644f66f-f614-44c6-8c86-0bb8fe478ff7)
-
-Использование View Binding существенно упрощает работу с графическими компонентами Android‑приложения, делая код чище и безопаснее, а также ускоряет поиск ошибок, перенося его на стадию компиляции.
+![image](https://github.com/user-attachments/assets/c286ad53-1d08-47a7-98e0-065efb146b6b)
 
 ---
 
-## ОСНОВНЫЕ ПОНЯТИЯ АСИНХРОННОЙ РАБОТЫ В ОС ANDROID
+##  ПОКАЗАНИЯ АКСЕЛЕРОМЕТРА
 
-- Был создан модуль **thread**
-
-- Включён **View Binding** в `build.gradle`:
+Создан модуль **Accelerometer**. Активность реализует интерфейс `SensorEventListener`, регистрируя слушатель в `onResume()` и освобождая ресурсы в `onPause()`:
 
 ```java
-viewBinding {
-    enabled = true
-}
+sensorManager.registerListener(this,
+        accelerometer,
+        SensorManager.SENSOR_DELAY_NORMAL);
 ```
 
-![image](https://github.com/user-attachments/assets/c8558b87-daab-4c72-9590-52be3c0108bf)
+В методе `onSensorChanged()` значения осей x, y, z выводятся в три **TextView**, обновляясь при каждом изменении ориентации устройства.
 
-![image](https://github.com/user-attachments/assets/f08c3353-a0e5-4f36-9f6c-5e6e1a4246f0)
+![image](https://github.com/user-attachments/assets/aac87fa7-86a1-41a6-853f-db2b551d4176)
 
-1. **View Binding** в Java‑коде так же устраняет необходимость в `findViewById`, обеспечивая корректную типизацию и защиту от `NullPointerException`.
-2. Использование `Thread` позволяет вынести ресурсоёмкие операции за пределы UI‑потока и тем самым предотвратить заморозку интерфейса.
-3. Метод `runOnUiThread()` обеспечивает безопасное взаимодействие фоновых потоков с элементами пользовательского интерфейса.
-4. Практика подтвердила теорию главы: грамотное распределение задач между потоками — фундамент отзывчивого и стабильного Android‑приложения.
 
 ---
 
-## ПЕРЕДАЧА ДАННЫХ МЕЖДУ ПОТОКАМИ
+## МЕХАНИЗМ РАЗРЕШЕНИЙ
 
-### ЗАДАНИЕ №3.1
-
-Создан модуль **data_thread**.
-
-![image](https://github.com/user-attachments/assets/6dae5413-dbf3-43fd-a50d-496bfd4cc36d)
-
-1. `runOnUiThread(Runnable)`
-- Выполняет Runnable в главном (UI) потоке	
-- Сразу после добавления, при следующем цикле UI
-2. `View.post(Runnable)`
-- Отправляет задачу в очередь сообщений конкретного View
-- Как только очередь доходит до этой задачи
-3. `View.postDelayed(Runnable, delay)`
-- Выполняет задачу в UI-потоке с задержкой
-- После указанной задержки (в мс)
-
-### ЗАДАНИЕ №3.2
-
-В данном задании реализован механизм взаимодействия между потоками с помощью очереди сообщений (MessageQueue) и компонентов `Looper` и `Handler`. Пользователь вводит возраст и профессию. Информация передается во второй поток, в котором по возрасту осуществляется задержка, а затем результат возвращается обратно в основной поток.
-
-![image](https://github.com/user-attachments/assets/651081a5-7453-4f26-bc5c-94c8c8ca5044)
-
-![image](https://github.com/user-attachments/assets/86c3b919-bf03-4e7b-82ae-e259b7c38319)
-
-В ходе выполнения задания был создан поток с собственным `Looper`, настроен обмен сообщениями между фоновым и главным потоком с помощью `Handler`, реализована задержка по времени и возвращение результата. 
-
-### ЗАДАНИЕ №3.3
-
-Был создан модуль **CryptoLoader**. Включён `ViewBinding` в `build.gradle` модуля добавлена строка:
-
-```java
-viewBinding {
-    enabled = true
-} }
-```
-
-Также был написан класс **CryptoUtils** с методами:
-
-- `generateKey()` – генерирует 256-битный ключ AES;
-- `encryptMsg(String, SecretKey)` – шифрует строку в массив байт;
-- `decryptMsg(byte[], SecretKey)` – дешифрует массив байт обратно в строку.
-
-Был реализован собственный **Loader**
-
-Создан класс **MyLoader**, наследующий `AsyncTaskLoader<String>`.
-
-В конструкторе принимает `Context` и `Bundle` с зашифрованными данными и ключом.
-
-В `onStartLoading()` вызывает `forceLoad()`, а в `loadInBackground()` выполняет дешифрование через CryptoUtils и возвращает результат.
-
-![image](https://github.com/user-attachments/assets/0cae6d53-a9ad-404c-8943-34a466409e0f)
-
-Реализован полноценный пример использования `LoaderManager` и собственного `AsyncTaskLoader` для асинхронной обработки данных (дешифровки AES) с безопасной передачей результата в UI-поток, устойчивый к изменениям конфигурации.
-
----
-
-## СЕРВИС 
-
-Создан новый модуль **ServiceApp**. В `build.gradle` модуля включён `ViewBinding`. В `AndroidManifest.xml` модули добавлены разрешения:
+Добавление «dangerous»-permissions в **AndroidManifest.xml**:
 
 ```xml
-<uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-<uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+<uses-permission android:name="android.permission.CAMERA"/>
+<uses-permission android:name="android.permission.RECORD_AUDIO"/>
+<uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
 ```
 
-Внутри <application> зарегистрирован сервис:
+---
 
-```xml
-<service
-    android:name=".PlayerService"
-    android:exported="true"
-    android:enabled="true"
-    android:foregroundServiceType="mediaPlayback"/>
-```
+## КАМЕРА
 
-Также был добавлен аудиофайл. Для этого была создана папка **res/raw** и скопирован MP3-файл **music.mp3** в нее.
+Модуль **Camera** демонстрирует вызов системного приложения «Камера» посредством неявного намерения `MediaStore.ACTION_IMAGE_CAPTURE`. Для безопасного обмена файлом настроен `FileProvider`; его дескриптор добавлен в **AndroidManifest.xml**, а пути описаны в `res/xml/paths.xml`.
 
-Создан класс **PlayerService**, наследующий `Service`.
-
-В `onCreate()`:
-
-- Создан `NotificationChannel` и запущен foreground-сервис с уведомлением о «MIREA Music Player».
-- Инициализирован `MediaPlayer` для воспроизведения `R.raw.music`.
-
-В `onStartCommand()`:
-
-- Запускается проигрывание и устанавливается `OnCompletionListener`, чтобы по окончании автоматически снять foreground.
-- Вернул `START_NOT_STICKY` для корректного поведения при рестарте.
-
-В `onDestroy()`:
-
-- Останавливается и освобождается MediaPlayer, удаляется foreground-уведомление.
-
-![image](https://github.com/user-attachments/assets/7b0a4475-71da-4a79-aa18-ce45bff199a2)
-
-![image](https://github.com/user-attachments/assets/8d6d2bb9-c23c-423a-accb-25a909321ac7)
-
-Реализован foreground-сервис для фонового воспроизведения аудио с корректной работой в разных версиях Android, включая создание уведомлений, управление жизненным циклом (`onCreate`, `onStartCommand`, `onDestroy`) и обработку разрешений.
-
-## WORKMANAGER
-
-Был создан модуль **WorkManager**. Подключена библиотека **WorkManager** В `build.gradle` модуля добавлена зависимость:
+Перед запуском камеры формируется временный файл в директории **Pictures** приложения, генерируется Uri:
 
 ```java
-implementation "androidx.work:work-runtime:2.10.0"
+String authorities = getPackageName() + ".fileprovider";
+imageUri = FileProvider.getUriForFile(this, authorities, photoFile);
+cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
 ```
 
-Реализован класс **UploadWorker** и настроенны ограничения (Constraints):
+После съёмки снимок автоматически сохраняется и отображается в **ImageView**.
+
+![image](https://github.com/user-attachments/assets/46d36304-1bc6-4bb1-8ab7-df8b6f014283)
+
+![image](https://github.com/user-attachments/assets/09ba43de-eef0-46e6-9f96-925e6b71f064)
+
+![image](https://github.com/user-attachments/assets/1c51996d-f59e-435b-97f9-1fe9f7e98170)
+
+---
+
+## МИКРОФОН
+
+В модуле **AudioRecord** реализован диктофон. При старте записи создаётся и настраивается объект `MediaRecorder`.
+
+Запись:
 
 ```java
-Constraints constraints = new Constraints.Builder()
-    .setRequiredNetworkType(NetworkType.UNMETERED)  // только Wi-Fi
-    .setRequiresCharging(true)                     // во время зарядки
-    .build();
+recorder = new MediaRecorder();
+recorder.setAudioSource(MIC);
+recorder.setOutputFormat(THREE_GPP);
+recorder.setAudioEncoder(AMR_NB);
+recorder.setOutputFile(recordPath);
+recorder.prepare();
+recorder.start();
 ```
 
-![image](https://github.com/user-attachments/assets/0dbcf63c-498f-4fc2-abfd-ab165b83dc35)
+Воспроизведение:
 
-В модуле **WorkManager** реализован пример постановки фоновой задачи через `OneTimeWorkRequest` с заданными ограничениями, показан механизм планирования и автоматического обхода Doze/JobScheduler, а также проверка работы задачи и её отмены при несоблюдении `Constraints`.
+```java
+player = new MediaPlayer();
+player.setDataSource(recordPath);
+player.prepare();
+player.start();
+```
+
+- Кнопки **Record** и **Play** блокируют друг друга, предотвращая одновременный доступ к файлу.
+- Аудиофайл сохраняется в `/Android/data/<pkg>/files/Music/audiorecordtest.3gp`.
+
+![image](https://github.com/user-attachments/assets/5ca585c2-6301-4fb3-acae-40239cf79e49)
+
+![image](https://github.com/user-attachments/assets/f4402d46-8d45-4d0b-9e5a-dade9ca7536c)
+
+![image](https://github.com/user-attachments/assets/e3be9e2a-4a98-4a64-b6a8-3e1fd03f4a7c)
+
+![image](https://github.com/user-attachments/assets/42e3f921-fab3-439f-9d18-e9281c412bee)
 
 ---
 
 ## Итоги
 
-В ходе выполнения практической работы №4 закреплены навыки:
+В практической работе № 5 выполнены и проверены:
 
-- использования `ViewBinding` для безопасного доступа к элементам интерфейса;
-- организации многопоточности и обмена данными между потоками;
-- асинхронной загрузки и обработки данных через `Loader`;
-- создания foreground‑сервиса с уведомлением и воспроизведением медиа;
-- планирования периодических задач при помощи `WorkManager`.
+- Вывод полного перечня сенсоров и чтение потоковых данных акселерометра.
+- Реализация динамического запроса «опасных» разрешений, совместимая c Android 6-14.
+- Захват снимка стандартной камерой c безопасной передачей URI через `FileProvider`.
+- Сохранение фото в публичной медиатеке и отображение в «Галерее».
+- Запись звука микрофона, сохранение в 3GPP-файл и воспроизведение через `MediaPlayer`.
+- Корректное освобождение ресурсов и обработка жизненного цикла активностей.
 
 ---
 
 # MireaProject
 
-Был добавлен новый фрагмент **WorkFragment** в проект **MireaProject**, реализующий выполнение фоновой задачи с помощью библиотеки `WorkManager`.
+В рамках контрольного задания в проект **MireaProject** были добавлены три новых фрагмента, реализующих работу с аппаратной частью устройства
 
-Задача запускается по кнопке, выполняется в отдельном потоке с задержкой, и её статус отображается в интерфейсе.
+![image](https://github.com/user-attachments/assets/ed55ac88-daf9-46a5-bda2-e32347c26a69)
 
-- `MyWorker` — класс-наследник Worker, реализующий фоновую задачу (с задержкой 5 секунд и логированием).
-- `WorkFragment` — интерфейс с кнопкой запуска задачи и отображением её статуса (ENQUEUED, RUNNING, SUCCEEDED).
+---
 
-Фоновая задача запускается через **WorkManager** с использованием `OneTimeWorkRequest` и задержкой через `Thread.sleep(5000)`.
+## SensorFragment
 
-![image](https://github.com/user-attachments/assets/24abec16-c30b-47c7-97d9-ab5e6af68218)
+- Используются датчики `TYPE_ACCELEROMETER` и `TYPE_MAGNETIC_FIELD`.
+- Определяется направление на север, выводится угол в градусах.
 
+![image](https://github.com/user-attachments/assets/10aa1aa1-00b0-4c22-a091-e3dccbc51ca2)
+
+---
+
+## CameraFragment
+
+- Используется встроенное приложение камеры через `Intent`.
+- После съёмки изображение отображается на экране.
+
+![image](https://github.com/user-attachments/assets/b8389c18-ee2a-4ff3-bf03-74fd7d13f907)
+
+![image](https://github.com/user-attachments/assets/99e3e20d-4266-4efd-b4cc-d52251269417)
+
+---
+
+## MicrophoneFragment
+
+- Используется MediaRecorder для записи аудио.
+- Добавлена кнопка для воспроизведения записанного файла через MediaPlayer.
+- Кнопка "Воспроизвести" становится видимой только после завершения записи.
+
+![image](https://github.com/user-attachments/assets/f7ec3e66-1154-40d0-a490-d840415066ca)
+
+![image](https://github.com/user-attachments/assets/7bbe44e7-65b0-462a-bd88-5b2e775a0cd2)
+
+![image](https://github.com/user-attachments/assets/5d0d249a-73c5-4629-a973-da59b5c2e97f)
+
+---
+
+## ЗАПРОС РАЗРЕШЕНИЙ
+
+В код каждого фрагмента добавлены проверки и запросы разрешений:
+
+- `CAMERA` — для съёмки;
+- `RECORD_AUDIO` — для записи звука;
+- `WRITE_EXTERNAL_STORAGE` — для сохранения файла.
+
+Также в **AndroidManifest.xml** добавлено:
+
+```xml
+<uses-permission android:name="android.permission.CAMERA" />
+<uses-permission android:name="android.permission.RECORD_AUDIO" />
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    tools:ignore="ScopedStorage"/>
+<uses-feature android:name="android.hardware.camera" android:required="false" />
+```
 
 ---
 
