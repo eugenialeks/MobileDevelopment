@@ -55,8 +55,8 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = binding.navView;
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow,
-                R.id.nav_webview, R.id.nav_data, R.id.nav_work)
-                .setOpenableLayout(drawer)
+                R.id.nav_profile, R.id.nav_file
+        ).setOpenableLayout(drawer)
                 .build();
         NavHostFragment navHostFragment = (NavHostFragment)
                 getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_content_main);
