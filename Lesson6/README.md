@@ -1,6 +1,6 @@
-# Практическая работа №5
+# Практическая работа №6
 
-**Тема:** Использование аппаратных возможностей мобильных устройств: сенсоры, механизм разрешений, камера и микрофон в Android-приложениях
+**Тема:** Хранение пользовательских данных с помощью `SharedPreferences` и файловая работа в Android-приложениях
 
 ---
 
@@ -8,191 +8,131 @@
 
 Закрепить навыки:
 
-- получения и отображения списка аппаратных датчиков устройства;
-- чтения показаний акселерометра в реальном времени;
-- запроса «опасных» разрешений (runtime permissions) и обработки ответа пользователя;
-- вызова системного приложения «Камера», сохранения снимка через `FileProvider` и отображения результата;
-- записи и воспроизведения аудио при помощи `MediaRecorder` и `MediaPlayer`;
-- интеграции сенсоров, камеры и диктофона в единый проект **MireaProject**.
+- Простые настройки через `SharedPreferences`;
+- Защищённые настройки через `EncryptedSharedPreferences`;
+- Чтение и запись файлов во внутреннем и внешнем хранилищах;
+- Проектирование реляционной базы на SQLite и удобный доступ к ней через `Room`.
   
 ---
 
-## СПИСОК ДАТЧИКОВ
+## SHARED PREFERENCES
 
-Был создан проект **ru.mirea.golysheva.Lesson5**. Внутри демонстрируется работа с классом SensorManager для получения полной коллекции поддерживаемых датчиков:
+Создан модуль **Lesson6**.
+На экране размещены три поля ввода:
+- Номер группы;
+- Номер по списку;
+- Любимый фильм/сериал.
 
-```java
-SensorManager sensorManager =
-        (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-List<Sensor> sensors = sensorManager.getSensorList(Sensor.TYPE_ALL);
-```
-В макете **activity_main.xml** размещён `ListView`; при старте активности заполняется массивом хеш-карт, где Name — имя сенсора, Value — максимальный диапазон измерений. В результате пользователь видит полный перечень аппаратных и виртуальных датчиков устройства.
+По нажатию кнопки «Сохранить» значения сохраняются в getSharedPreferences("mirea_settings", MODE_PRIVATE); при старте приложения поля заполняются сохранёнными значениями.
+Сделан скриншот XML-файла настроек (**папка raw**).
 
-![image](https://github.com/user-attachments/assets/c286ad53-1d08-47a7-98e0-065efb146b6b)
+![image](https://github.com/user-attachments/assets/b305c894-e38e-42ba-b597-170f4cbeb79d)
 
----
+![image](https://github.com/user-attachments/assets/7c79ead3-b847-4eae-bab5-389cf85dbbb0)
 
-##  ПОКАЗАНИЯ АКСЕЛЕРОМЕТРА
+![image](https://github.com/user-attachments/assets/370aca16-abaf-47e1-8f94-cdc59a077044)
 
-Создан модуль **Accelerometer**. Активность реализует интерфейс `SensorEventListener`, регистрируя слушатель в `onResume()` и освобождая ресурсы в `onPause()`:
+###  EncryptedSharedPreferences
 
-```java
-sensorManager.registerListener(this,
-        accelerometer,
-        SensorManager.SENSOR_DELAY_NORMAL);
-```
+Создан модуль **SecureSharedPreferences**.
+Добавлена зависимость `androidx.security:security-crypto:1.0.0`.
+Сгенерирован мастер-ключ через `MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)`.
+Создан защищённый файл настроек `EncryptedSharedPreferences.create(...)` для хранения имени любимого поэта и пути к его изображению.
+Скриншот содержимого защищённого файла помещён в папку **raw**.
 
-В методе `onSensorChanged()` значения осей x, y, z выводятся в три **TextView**, обновляясь при каждом изменении ориентации устройства.
-
-![image](https://github.com/user-attachments/assets/aac87fa7-86a1-41a6-853f-db2b551d4176)
-
+![image](https://github.com/user-attachments/assets/14dc9121-d85a-4c74-bceb-0c3fddc460c6)
 
 ---
 
-## МЕХАНИЗМ РАЗРЕШЕНИЙ
+## РАБОТА С ФАЙЛАМИ
 
-Добавление «dangerous»-permissions в **AndroidManifest.xml**:
+Создан модуль **InternalFileStorage**. При нажатии «Сохранить» данные записываются в файл **russian_history.txt** через `openFileOutput(...)`.
+Файл перенесён в **raw**. 
 
-```xml
-<uses-permission android:name="android.permission.CAMERA"/>
-<uses-permission android:name="android.permission.RECORD_AUDIO"/>
-<uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
-```
+![image](https://github.com/user-attachments/assets/bdc82a6e-a042-48ee-899b-27d1007c9fc3)
 
----
+![image](https://github.com/user-attachments/assets/dd7ce7fe-97a9-4af4-87e8-5d9f8149c43f)
 
-## КАМЕРА
+![image](https://github.com/user-attachments/assets/597b783a-3527-4acd-8418-3a91954c6dde)
 
-Модуль **Camera** демонстрирует вызов системного приложения «Камера» посредством неявного намерения `MediaStore.ACTION_IMAGE_CAPTURE`. Для безопасного обмена файлом настроен `FileProvider`; его дескриптор добавлен в **AndroidManifest.xml**, а пути описаны в `res/xml/paths.xml`.
+### Notebook
 
-Перед запуском камеры формируется временный файл в директории **Pictures** приложения, генерируется Uri:
+Модуль **Notebook**: реализовано приложение «Блокнот».
+На экране поля «Название файла» и «Цитата», кнопки «Сохранить» и «Загрузить».
+Файлы сохраняются в `Environment.DIRECTORY_DOCUMENTS` (публичный каталог).
+Созданы две записи с цитатами известных людей, файлы перенесены в **raw**. 
 
-```java
-String authorities = getPackageName() + ".fileprovider";
-imageUri = FileProvider.getUriForFile(this, authorities, photoFile);
-cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-```
+![image](https://github.com/user-attachments/assets/97c5be9e-87e1-4dc9-8d6c-2eb2fbc272c5)
 
-После съёмки снимок автоматически сохраняется и отображается в **ImageView**.
+![image](https://github.com/user-attachments/assets/6f390166-43f5-4007-8f93-7444cf58f7b8)
 
-![image](https://github.com/user-attachments/assets/46d36304-1bc6-4bb1-8ab7-df8b6f014283)
-
-![image](https://github.com/user-attachments/assets/09ba43de-eef0-46e6-9f96-925e6b71f064)
-
-![image](https://github.com/user-attachments/assets/1c51996d-f59e-435b-97f9-1fe9f7e98170)
+![image](https://github.com/user-attachments/assets/3371687e-f8bc-422a-9191-8c1b0a9030ab)
 
 ---
 
-## МИКРОФОН
+## БАЗА ДАННЫХ SQLITE
 
-В модуле **AudioRecord** реализован диктофон. При старте записи создаётся и настраивается объект `MediaRecorder`.
+Модуль **EmployeeDB**: хранение вымышленных супер-героев.
+Класс **Hero** с полями `name`, `power`, `rating`.
+Класс **HeroDao** с CRUD-методами (`@Insert`, `@Query`, `@Update`, `@Delete`).
+Database: абстрактный класс **HeroDatabase** extends RoomDatabase, версия = 1.
+Application: Класс **App** singleton-инициализация БД через `Room.databaseBuilder(...).allowMainThreadQueries()`.
+В **MainActivity** продемонстрированы вставка, чтение, обновление и удаление записей.
 
-Запись:
+![image](https://github.com/user-attachments/assets/7473fac6-3737-4533-a206-e6135a06446a)
 
-```java
-recorder = new MediaRecorder();
-recorder.setAudioSource(MIC);
-recorder.setOutputFormat(THREE_GPP);
-recorder.setAudioEncoder(AMR_NB);
-recorder.setOutputFile(recordPath);
-recorder.prepare();
-recorder.start();
-```
+![image](https://github.com/user-attachments/assets/38d149e4-edf4-48d1-95ce-54e792baf2b2)
 
-Воспроизведение:
+![image](https://github.com/user-attachments/assets/a54837b5-8292-40e5-b0e3-72e3778a49a2)
 
-```java
-player = new MediaPlayer();
-player.setDataSource(recordPath);
-player.prepare();
-player.start();
-```
-
-- Кнопки **Record** и **Play** блокируют друг друга, предотвращая одновременный доступ к файлу.
-- Аудиофайл сохраняется в `/Android/data/<pkg>/files/Music/audiorecordtest.3gp`.
-
-![image](https://github.com/user-attachments/assets/5ca585c2-6301-4fb3-acae-40239cf79e49)
-
-![image](https://github.com/user-attachments/assets/f4402d46-8d45-4d0b-9e5a-dade9ca7536c)
-
-![image](https://github.com/user-attachments/assets/e3be9e2a-4a98-4a64-b6a8-3e1fd03f4a7c)
-
-![image](https://github.com/user-attachments/assets/42e3f921-fab3-439f-9d18-e9281c412bee)
+![image](https://github.com/user-attachments/assets/1cf3a6b1-f8e3-400f-95f8-2380e7b4a430)
 
 ---
 
 ## Итоги
 
-В практической работе № 5 выполнены и проверены:
+В практической работе № 6 выполнены и проверены:
 
-- Вывод полного перечня сенсоров и чтение потоковых данных акселерометра.
-- Реализация динамического запроса «опасных» разрешений, совместимая c Android 6-14.
-- Захват снимка стандартной камерой c безопасной передачей URI через `FileProvider`.
-- Сохранение фото в публичной медиатеке и отображение в «Галерее».
-- Запись звука микрофона, сохранение в 3GPP-файл и воспроизведение через `MediaPlayer`.
-- Корректное освобождение ресурсов и обработка жизненного цикла активностей.
+- Конфигурация и использование `SharedPreferences` и `EncryptedSharedPreferences`.
+- Чтение и запись файлов во внутренних и внешних каталогах устройства.
+- Проектирование и использование SQLite через высокоуровневый компонент `Room`.
 
 ---
 
 # MireaProject
 
-В рамках контрольного задания в проект **MireaProject** были добавлены три новых фрагмента, реализующих работу с аппаратной частью устройства
+В проект **MireaProject** были добавлены два новых фрагмента:
 
-![image](https://github.com/user-attachments/assets/ed55ac88-daf9-46a5-bda2-e32347c26a69)
-
----
-
-## SensorFragment
-
-- Используются датчики `TYPE_ACCELEROMETER` и `TYPE_MAGNETIC_FIELD`.
-- Определяется направление на север, выводится угол в градусах.
-
-![image](https://github.com/user-attachments/assets/10aa1aa1-00b0-4c22-a091-e3dccbc51ca2)
+1. Профиль — пользователь вводит и сохраняет данные (имя, группа) с помощью `SharedPreferences`.
+2. Файлы — реализована работа с файлами, отображение всех сохранённых файлов и создание новых через `FloatingActionButton`.
 
 ---
 
-## CameraFragment
+## Фрагмент «Профиль»
 
-- Используется встроенное приложение камеры через `Intent`.
-- После съёмки изображение отображается на экране.
+Разработан экран для ввода имени и группы студента.
+Данные сохраняются с помощью механизма `SharedPreferences`.
+При следующем открытии экрана введённые данные восстанавливаются автоматически.
+Интерфейс реализован с использованием компонентов `EditText` и `Button`.
 
-![image](https://github.com/user-attachments/assets/b8389c18-ee2a-4ff3-bf03-74fd7d13f907)
+![image](https://github.com/user-attachments/assets/56c4b79d-2f2f-43f7-842c-20d0b44445ed)
 
-![image](https://github.com/user-attachments/assets/99e3e20d-4266-4efd-b4cc-d52251269417)
-
----
-
-## MicrophoneFragment
-
-- Используется MediaRecorder для записи аудио.
-- Добавлена кнопка для воспроизведения записанного файла через MediaPlayer.
-- Кнопка "Воспроизвести" становится видимой только после завершения записи.
-
-![image](https://github.com/user-attachments/assets/f7ec3e66-1154-40d0-a490-d840415066ca)
-
-![image](https://github.com/user-attachments/assets/7bbe44e7-65b0-462a-bd88-5b2e775a0cd2)
-
-![image](https://github.com/user-attachments/assets/5d0d249a-73c5-4629-a973-da59b5c2e97f)
+![image](https://github.com/user-attachments/assets/6ea23fe4-ec07-4388-8546-002bfe5ed557)
 
 ---
 
-## ЗАПРОС РАЗРЕШЕНИЙ
+## Фрагмент «Работа с файлами»
 
-В код каждого фрагмента добавлены проверки и запросы разрешений:
+Пользователь может создавать текстовые файлы во внутреннем хранилище.
+Для создания используется `FloatingActionButton`, при нажатии которого появляется диалог ввода имени и содержимого файла.
+Все созданные файлы отображаются в виде списка.
+При нажатии на любой файл открывается `AlertDialog` с его содержимым.
 
-- `CAMERA` — для съёмки;
-- `RECORD_AUDIO` — для записи звука;
-- `WRITE_EXTERNAL_STORAGE` — для сохранения файла.
+![image](https://github.com/user-attachments/assets/2498618b-58ef-42bb-9dcf-a15b2823e9eb)
 
-Также в **AndroidManifest.xml** добавлено:
+![image](https://github.com/user-attachments/assets/5eeee841-895a-4557-ad0e-0e6b43c2b177)
 
-```xml
-<uses-permission android:name="android.permission.CAMERA" />
-<uses-permission android:name="android.permission.RECORD_AUDIO" />
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-    tools:ignore="ScopedStorage"/>
-<uses-feature android:name="android.hardware.camera" android:required="false" />
-```
+![image](https://github.com/user-attachments/assets/e88bda83-7998-4136-82d7-c4cab998d151)
 
 ---
 
