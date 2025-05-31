@@ -56,5 +56,10 @@
             android:id="@+id/nav_file"
             android:icon="@drawable/ic_menu_save"
             android:title="Файлы" />
+
+        <item
+            android:id="@+id/nav_network"
+            android:icon="@drawable/ic_baseline_cloud_24"
+            android:title="Сетевые данные" />
     </group>
 </menu>

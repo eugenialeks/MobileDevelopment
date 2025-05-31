@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Заголовок приложения -->
+    <string name="app_name">FirebaseAuth</string>
+
+    <!-- Заголовок экрана (Email and Password) -->
+    <string name="emailpassword_title_text">Email and Password</string>
+
+    <!-- Краткое описание экрана (необязательно, можно убрать, если не используется) -->
+    <string name="desc_emailpassword">Use an email and password to authenticate with Firebase.</string>
+
+    <!-- Подсказки для полей ввода -->
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+
+    <!-- Текст на кнопках -->
+    <string name="sign_in">Sign In</string>
+    <string name="create_account">Create Account</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="verify_email">Verify Email</string>
+
+    <!-- Статусы -->
+    <string name="signed_in">Signed In</string>
+    <string name="signed_out">Signed Out</string>
+    <string name="firebase_status_fmt">Firebase UID: %s</string>
+    <string name="emailpassword_status_fmt">Email User: %1$s (verified: %2$b)</string>
+
+    <!-- Сообщения об ошибках -->
+    <string name="auth_failed">Authentication failed</string>
+    <string name="error_sign_in_failed">Sign in failed, see logs for details.</string>
+</resources>

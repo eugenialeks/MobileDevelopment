@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    id("com.google.gms.google-services") version "4.3.15"
 }
 
 android {
@@ -35,6 +36,10 @@ android {
 }
 
 dependencies {
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation ("com.google.firebase:firebase-auth:22.3.0")
+    implementation ("com.google.android.gms:play-services-auth:20.7.0")
     implementation ("androidx.work:work-runtime:2.9.0")
     implementation(libs.appcompat)
     implementation(libs.material)

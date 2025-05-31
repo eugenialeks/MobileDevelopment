@@ -70,4 +70,10 @@
         android:name="ru.mirea.golysheva.mireaproject.ui.file.FileFragment"
         android:label="Файлы"
         tools:layout="@layout/fragment_file" />
+
+    <fragment
+        android:id="@+id/nav_network"
+        android:name="ru.mirea.golysheva.mireaproject.ui.network.NetworkFragment"
+        android:label="Сетевые данные"
+        tools:layout="@layout/fragment_network" />
 </navigation>
